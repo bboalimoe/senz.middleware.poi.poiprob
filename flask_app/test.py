@@ -59,8 +59,8 @@ for index, (name, classifier) in enumerate(classifiers.items()):
     # initialize the GMM parameters in a supervised manner.
     classifier.means_ = np.array([X_train[y_train == i].mean(axis=0)
                                   for i in xrange(n_classes)])
-    print "train!!!!!"
-    print X_train
+    # print "train!!!!!"
+    # print X_train
     # Train the other parameters using the EM algorithm.
     classifier.fit(X_train)
 
@@ -86,10 +86,11 @@ for index, (name, classifier) in enumerate(classifiers.items()):
     print X_test
 
     y_test_pred = classifier.predict(X_test)
-    print classifier.score_samples(X_test)
-
-    print "Result!!"
-    print y_test_pred
+    # print classifier.score_samples(X_test)
+    # print "fuck!!"
+    # print classifier.score(X_test)
+    # print "Result!!"
+    # print y_test_pred
     test_accuracy = np.mean(y_test_pred.ravel() == y_test.ravel()) * 100
     plt.text(0.05, 0.8, 'Test accuracy: %.1f' % test_accuracy,
              transform=h.transAxes)

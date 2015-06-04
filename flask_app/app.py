@@ -1,24 +1,26 @@
 # -*- coding: UTF-8 -*-
 
+import numpy as np
 __author__ = "MeoWoodie"
 
 from flask import Flask, request, url_for, Response, send_file
 from poi_analyser_lib.datasets import Dataset
 from poi_analyser_lib.trainer import Trainer
+from poi_analyser_lib.predictor import Predictor
 import json
 
 
 app = Flask(__name__)
 
 @app.route("/trainingGMM/", methods=["POST"])
-def trainingGMM():
+def trainingPOI():
     # Analyse the incoming data.
     data = json.loads(request.data)
     print "Received data is", data
 
     _obs = data["obs"]
     _model = data["model"]
-    _location_type = data["config"]["locationType"]
+    # _location_type = data["config"]["locationType"]
 
     t = Trainer(_model)
     t.fit(_obs)
@@ -27,21 +29,17 @@ def trainingGMM():
     return result
 
 @app.route("/predictPoi/", methods=["POST"])
-def classifyGMMHMM():
-    if request.method != "POST":
-        err_msg = "Your request method is illegal"
-        return {"massage": err_msg, "code": 1}
+def predictPOI():
     # Analyse the incoming data.
     data = json.loads(request.data)
     print "Received data is", data
-    # The training event
-    _seq = data["seq"]
+    _t = data["seq"]
     _models = data["models"]
-    _config = data["config"]
 
-    result = classifier.classifyByGMMHMM(_seq, _models, _config)
+    p = Predictor(_models)
+    scores = p.scores(_t)
 
-    result = json.dumps({"result": result, "code": 0, "message": "Classifing successfully"})
+    result = json.dumps({"result": scores, "code": 0, "message": "Predicting successfully"})
     return result
 
 

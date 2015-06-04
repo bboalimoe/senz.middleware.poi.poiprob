@@ -1,9 +1,8 @@
 import numpy as np
-import datasets
 from sklearn.mixture import GMM
 
 
-class Trainer():
+class Trainer(object):
     def __init__(self, model):
         self.n_c = model["nMix"]
         self.c_t = model["covarianceType"]
@@ -20,7 +19,7 @@ class Trainer():
 
     def fit(self, x):
         _x = np.array(x)
-        if len(_x.shape) == 1:
+        if _x.ndim == 1:
             _x = _x.reshape([len(x), 1])
         self.gmm.fit(X=_x, y=None)
 
