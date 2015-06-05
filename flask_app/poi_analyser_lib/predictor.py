@@ -6,16 +6,16 @@ class Predictor(object):
         covars  = []
         means   = []
         weights = []
-        n_mix       = 0
-        n_mixs      = []
-        covar_types = []
-        sum         = 0
+        sum     = 0
+        self.n_mixs      = []
+        self.n_mix       = 0
+        self.covar_types = []
 
         for model in models:
             sum   += model["count"]
-            n_mix += model["nMix"]
-            n_mixs.append(n_mix)
-            covar_types.append(model["covarianceType"])
+            self.n_mix += model["nMix"]
+            self.n_mixs.append(model["nMix"])
+            self.covar_types.append(model["covarianceType"])
 
         for model in models:
             params = model["params"]["params"]
@@ -28,8 +28,8 @@ class Predictor(object):
                 weights.append(weight)
 
         self.gmm = GMM(
-            n_components=n_mix,
-            covariance_type=self.checkCovarianceType(covar_types)
+            n_components=self.n_mix,
+            covariance_type=self.checkCovarianceType(self.covar_types)
         )
         self.gmm.covars_  = np.array(covars)
         self.gmm.means_   = np.array(means)
@@ -40,8 +40,23 @@ class Predictor(object):
         _t = np.array(t)
         if _t.ndim == 1:
             _t = _t.reshape([len(_t), 1])
-        probs = self.gmm.score_samples(_t)[1].tolist()
-        return self.gmm.score_samples(_t)[1].tolist()
+
+        probs = self.gmm.score_samples(_t)[1].tolist()[0]
+        print probs
+
+        scores = []
+        # i = 0
+        # while i < len(self.n_mixs):
+        #     scores.append(0)
+        #     i += 1
+        # print scores
+        # i = 0
+        # while i < len(probs):
+        #     scores[i/len(self.n_mixs[])] += probs[i]
+        #     i += 1
+        # print scores
+
+        return scores
 
     def checkCovarianceType(self, covariance_type):
         return covariance_type[0]
