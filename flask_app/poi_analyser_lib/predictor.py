@@ -6,18 +6,24 @@ class Predictor(object):
         covars  = []
         means   = []
         weights = []
-        sum     = 0
+        sum     = 0           # the sum of each gmm's sample spot.
         self.n_mixs      = []
-        self.n_mix       = 0
-        self.covar_types = []
+        self.n_mix       = 0  # the count of Gaussian model of new gmm.
+        self.covar_types = [] # the covariance type of each gmm.
+        self.models      = models
 
-        for model in models:
-            sum   += model["count"]
-            self.n_mix += model["nMix"]
+        # Generate new GMM's nMix and covarianceType
+        for model in self.models:
+            sum += model["count"]
             self.n_mixs.append(model["nMix"])
+            self.n_mix += model["nMix"]
             self.covar_types.append(model["covarianceType"])
 
-        for model in models:
+        for i in range(self.n_mix):
+            pass
+
+        # Generate every Gaussian model params.
+        for model in self.models:
             params = model["params"]["params"]
             for covar in params["covars"]:
                 covars.append(covar)
@@ -27,6 +33,7 @@ class Predictor(object):
                 weight *= (float(model["count"])/float(sum))
                 weights.append(weight)
 
+        # Build the new GMM.
         self.gmm = GMM(
             n_components=self.n_mix,
             covariance_type=self.checkCovarianceType(self.covar_types)
@@ -37,33 +44,32 @@ class Predictor(object):
 
 
     def scores(self, t):
+        # To numpy array.
         _t = np.array(t)
+        # if t's dimensional is 1, then convert to 2.
         if _t.ndim == 1:
             _t = _t.reshape([len(_t), 1])
-
-        probs = self.gmm.score_samples(_t)[1].tolist()[0]
-        print probs
-
-        scores = []
-        # i = 0
-        # while i < len(self.n_mixs):
-        #     scores.append(0)
-        #     i += 1
-        # print scores
-        # i = 0
-        # while i < len(probs):
-        #     scores[i/len(self.n_mixs[])] += probs[i]
-        #     i += 1
-        # print scores
-
-        return scores
+        # every spot's score in new GMM.
+        probs = self.gmm.score_samples(_t)[1].tolist()
+        result = []
+        for prob in probs:
+            scores = []
+            index = 0
+            for n_mix in self.n_mixs:
+                score = 0
+                for i in range(n_mix):
+                    score += prob[index]
+                    index += 1
+                scores.append(score)
+            result.append(scores)
+        return result
 
     def checkCovarianceType(self, covariance_type):
         return covariance_type[0]
 
 
 if __name__ == "__main__":
-    _model = [{'nMix': 4, 'covarianceType': 'full', "count": 500,
+    _model = [{'nMix': 4, 'covarianceType': 'full', "count": 1000,
               'params': {'nMix': 4, 'covarianceType': 'full', 'params': {
                   'covars': [[[1.2221303985456107]], [[0.3086663025400781]], [[1.28502444797073]], [[0.26113702790883486]]],
                   'weights': [0.23603795980927875, 0.2527552282253478, 0.2800574289988682, 0.2311493829665058],
@@ -74,7 +80,7 @@ if __name__ == "__main__":
                   'weights': [0.23603795980927875, 0.2527552282253478, 0.2800574289988682, 0.2311493829665058],
                   'means': [[4.536022877901543], [1.4914085123695209], [3.6895831128524326], [6.571810554595958]]}}}]
 
-    t = [3.0]
+    t = [3.9, 1.0, 2.2]
 
     p = Predictor(_model)
     print p.scores(t)
