@@ -19,8 +19,6 @@ class Predictor(object):
             self.n_mix += model["nMix"]
             self.covar_types.append(model["covarianceType"])
 
-        for i in range(self.n_mix):
-            pass
 
         # Generate every Gaussian model params.
         for model in self.models:
