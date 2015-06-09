@@ -1,5 +1,5 @@
 from logentries import LogentriesHandler
-from settings import *
+from config import *
 import logging
 
 log = logging.getLogger('logentries')
