@@ -6,13 +6,13 @@ class Predictor(object):
         covars  = []
         means   = []
         weights = []
-        sum     = 0           # the sum of each gmm's sample spot.
+        sum     = 0           # the sum of each gmm"s sample spot.
         self.n_mixs      = []
         self.n_mix       = 0  # the count of Gaussian model of new gmm.
         self.covar_types = [] # the covariance type of each gmm.
         self.models      = models
 
-        # Generate new GMM's nMix and covarianceType
+        # Generate new GMM"s nMix and covarianceType
         for model in self.models:
             sum += model["count"]
             self.n_mixs.append(model["nMix"])
@@ -44,10 +44,10 @@ class Predictor(object):
     def scores(self, t):
         # To numpy array.
         _t = np.array(t)
-        # if t's dimensional is 1, then convert to 2.
+        # if t"s dimensional is 1, then convert to 2.
         if _t.ndim == 1:
             _t = _t.reshape([len(_t), 1])
-        # every spot's score in new GMM.
+        # every spot"s score in new GMM.
         probs = self.gmm.score_samples(_t)[1].tolist()
         result = []
         for prob in probs:
@@ -67,16 +67,16 @@ class Predictor(object):
 
 
 if __name__ == "__main__":
-    _model = [{'nMix': 4, 'covarianceType': 'full', "count": 1000,
-              'params': {'nMix': 4, 'covarianceType': 'full', 'params': {
-                  'covars': [[[1.2221303985456107]], [[0.3086663025400781]], [[1.28502444797073]], [[0.26113702790883486]]],
-                  'weights': [0.23603795980927875, 0.2527552282253478, 0.2800574289988682, 0.2311493829665058],
-                  'means': [[4.536022877901543], [1.4914085123695209], [3.6895831128524326], [6.571810554595958]]}}},
-              {'nMix': 4, 'covarianceType': 'full', "count": 500,
-              'params': {'nMix': 4, 'covarianceType': 'full', 'params': {
-                  'covars': [[[1.2221303985456107]], [[0.3086663025400781]], [[1.28502444797073]], [[0.26113702790883486]]],
-                  'weights': [0.23603795980927875, 0.2527552282253478, 0.2800574289988682, 0.2311493829665058],
-                  'means': [[4.536022877901543], [1.4914085123695209], [3.6895831128524326], [6.571810554595958]]}}}]
+    _model = [{"nMix": 4, "covarianceType": "full", "count": 1000,
+              "params": {"nMix": 4, "covarianceType": "full", "params": {
+                  "covars": [[[1.2221303985456107]], [[0.3086663025400781]], [[1.28502444797073]], [[0.26113702790883486]]],
+                  "weights": [0.23603795980927875, 0.2527552282253478, 0.2800574289988682, 0.2311493829665058],
+                  "means": [[4.536022877901543], [1.4914085123695209], [3.6895831128524326], [6.571810554595958]]}}},
+              {"nMix": 4, "covarianceType": "full", "count": 500,
+              "params": {"nMix": 4, "covarianceType": "full", "params": {
+                  "covars": [[[1.2221303985456107]], [[0.3086663025400781]], [[1.28502444797073]], [[0.26113702790883486]]],
+                  "weights": [0.23603795980927875, 0.2527552282253478, 0.2800574289988682, 0.2311493829665058],
+                  "means": [[4.536022877901543], [1.4914085123695209], [3.6895831128524326], [6.571810554595958]]}}}]
 
     t = [3.9, 1.0, 2.2]
 
