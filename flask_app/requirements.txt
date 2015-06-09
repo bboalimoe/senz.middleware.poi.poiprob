@@ -1,3 +1,7 @@
 numpy
 scipy
 scikit-learn
+Flask
+blinker
+gunicorn
+rollbar
