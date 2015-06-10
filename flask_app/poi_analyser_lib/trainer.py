@@ -2,7 +2,6 @@ import numpy as np
 from sklearn.mixture import GMM
 from exception import *
 
-
 class Trainer(object):
     def __init__(self, model):
         try:

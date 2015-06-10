@@ -6,11 +6,6 @@ class PoiMiddlewareError(Exception):
     def __init__(self):
         self.traceback = getTracebackInfo()
 
-# class EnvVarError(PoiMiddlewareError):
-#     def __str__(self):
-#         return "<%s> caused environment variable APP_ENV is not exist" % \
-#                self.__class__.__name__
-
 class FittingError(PoiMiddlewareError):
     def __init__(self, _x, _model):
         PoiMiddlewareError.__init__(self)
