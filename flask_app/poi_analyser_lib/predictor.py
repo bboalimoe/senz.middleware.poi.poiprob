@@ -1,5 +1,7 @@
 import numpy as np
+from utils import checkCovarianceType
 from sklearn.mixture import GMM
+from exception import *
 
 class Predictor(object):
     def __init__(self, models):
@@ -14,28 +16,40 @@ class Predictor(object):
 
         # Generate new GMM"s nMix and covarianceType
         for model in self.models:
-            sum += model["count"]
-            self.n_mixs.append(model["nMix"])
-            self.n_mix += model["nMix"]
-            self.covar_types.append(model["covarianceType"])
+            try:
+                sum += model["count"]
+                self.n_mixs.append(model["nMix"])
+                self.n_mix += model["nMix"]
+                self.covar_types.append(model["covarianceType"])
+            except KeyError, error_key:
+                raise ModelParamKeyError(error_key)
 
 
         # Generate every Gaussian model params.
         for model in self.models:
-            params = model["params"]["params"]
-            for covar in params["covars"]:
-                covars.append(covar)
-            for mean in params["means"]:
-                means.append(mean)
-            for weight in params["weights"]:
-                weight *= (float(model["count"])/float(sum))
-                weights.append(weight)
+            try:
+                params = model["params"]["params"]
+                for covar in params["covars"]:
+                    covars.append(covar)
+                for mean in params["means"]:
+                    means.append(mean)
+                for weight in params["weights"]:
+                    weight *= (float(model["count"])/float(sum))
+                    weights.append(weight)
+            except KeyError, error_key:
+                raise ModelParamKeyError(error_key)
 
         # Build the new GMM.
-        self.gmm = GMM(
-            n_components=self.n_mix,
-            covariance_type=self.checkCovarianceType(self.covar_types)
-        )
+        try:
+            self.gmm = GMM(
+                n_components=self.n_mix,
+                covariance_type=checkCovarianceType(self.covar_types)
+            )
+        except CovarianceTypeError:
+            raise
+        except:
+            raise ModelInitError(self.n_mix, self.covar_types, None)
+
         self.gmm.covars_  = np.array(covars)
         self.gmm.means_   = np.array(means)
         self.gmm.weights_ = np.array(weights)
@@ -48,7 +62,17 @@ class Predictor(object):
         if _t.ndim == 1:
             _t = _t.reshape([len(_t), 1])
         # every spot"s score in new GMM.
-        probs = self.gmm.score_samples(_t)[1].tolist()
+        try:
+            probs = self.gmm.score_samples(_t)[1].tolist()
+        except:
+            params = {
+                "initParams": self.gmm,
+                "covars": self.gmm.covars_,
+                "means": self.gmm.means_,
+                "weights": self.gmm.weights_
+            }
+            raise PredictingError(_t, params)
+
         result = []
         for prob in probs:
             scores = []
@@ -62,8 +86,6 @@ class Predictor(object):
             result.append(scores)
         return result
 
-    def checkCovarianceType(self, covariance_type):
-        return covariance_type[0]
 
 
 if __name__ == "__main__":

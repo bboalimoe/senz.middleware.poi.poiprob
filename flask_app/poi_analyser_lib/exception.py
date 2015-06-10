@@ -1,4 +1,4 @@
-__all__ = ["EnvVarError", "FittingError", "ModelParamKeyError", "ModelInitError"]
+__all__ = ["EnvVarError", "FittingError", "ModelParamKeyError", "ModelInitError", "PredictingError", "CovarianceTypeError"]
 
 class PoiMiddlewareError(Exception):
     pass
@@ -17,6 +17,15 @@ class FittingError(PoiMiddlewareError):
         return "<%s> caused FITTING failed, input X: %s, input Model: %s" % \
                (self.__class__.__name__, self.X, self.model)
 
+class PredictingError(PoiMiddlewareError):
+    def __init__(self, _t, _model):
+        self.T = _t
+        self.model = _model
+
+    def __str__(self):
+        return "<%s> caused Predicting failed, input T: %s, input Model: %s" % \
+               (self.__class__.__name__, self.T, self.model)
+
 class ModelParamKeyError(PoiMiddlewareError):
     def __init__(self, key):
         self.key = key
@@ -24,6 +33,21 @@ class ModelParamKeyError(PoiMiddlewareError):
     def __str__(self):
         return "<%s> caused KEY error, there is no key named %s" % \
                (self.__class__.__name__, self.key)
+
+class CovarianceTypeError(PoiMiddlewareError):
+    def __init__(self, covariance_type):
+        self.covarianceType = covariance_type
+
+    def __str__(self):
+        if self.covarianceType is None:
+            return "<%s> caused COVARIANCE TYPE error, there is no specific covariance type" % \
+                   self.__class__.__name__
+        elif self.covarianceType == "inconformity":
+            return "<%s> caused COVARIANCE TYPE error, inconformity of covariance types in the list occurred" % \
+                   self.__class__.__name__
+        else:
+            return "<%s> caused COVARIANCE TYPE error, there is no covariance type named %s" % \
+                   (self.__class__.__name__, self.covarianceType)
 
 class ModelInitError(PoiMiddlewareError):
     def __init__(self, n_component, covariance_type, n_iter):
