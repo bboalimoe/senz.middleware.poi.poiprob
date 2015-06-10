@@ -50,7 +50,6 @@ class Predictor(object):
         except CovarianceTypeError:
             raise
         except:
-            print "rilegou"
             raise ModelInitError(self.n_mix, self.covar_types, None)
 
         self.gmm.covars_  = np.array(covars)
