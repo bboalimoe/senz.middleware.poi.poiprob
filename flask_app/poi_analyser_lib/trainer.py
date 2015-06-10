@@ -1,27 +1,48 @@
 import numpy as np
 from sklearn.mixture import GMM
+from exception import *
 
 
 class Trainer(object):
     def __init__(self, model):
-        self.n_c = model["nMix"]
-        self.c_t = model["covarianceType"]
-        self.n_i = model["nIter"]
-        init_params = model["params"]
-        self.gmm = GMM(n_components=self.n_c, covariance_type=self.c_t,
-                       random_state=None, thresh=None, tol=1e-3, min_covar=1e-3,
-                       n_iter=self.n_i, n_init=1, params='wmc', init_params='wmc')
+        try:
+            self.n_c = model["nMix"]
+            self.c_t = model["covarianceType"]
+            self.n_i = model["nIter"]
+            init_params = model["params"]
+        except KeyError, error_key:
+            raise ModelParamKeyError(error_key)
+
+        try:
+            self.gmm = GMM(n_components=self.n_c, covariance_type=self.c_t,
+                           random_state=None, thresh=None, tol=1e-3, min_covar=1e-3,
+                           n_iter=self.n_i, n_init=1, params='wmc', init_params='wmc')
+        except:
+            raise ModelInitError(self.n_c, self.c_t, self.n_i)
+
         if init_params.has_key("params"):
             gmm_param = init_params["params"]
-            self.gmm.covars_ = np.array(gmm_param["covars"])
-            self.gmm.means_ = np.array(gmm_param["means"])
-            self.gmm.weights_ = np.array(gmm_param["weights"])
+            try:
+                self.gmm.covars_ = np.array(gmm_param["covars"])
+                self.gmm.means_ = np.array(gmm_param["means"])
+                self.gmm.weights_ = np.array(gmm_param["weights"])
+            except KeyError, error_key:
+                raise ModelParamKeyError(error_key)
 
     def fit(self, x):
         _x = np.array(x)
         if _x.ndim == 1:
             _x = _x.reshape([len(x), 1])
-        self.gmm.fit(X=_x, y=None)
+        try:
+            self.gmm.fit(X=_x, y=None)
+        except:
+            params = {
+                "initParams": self.gmm,
+                "covars": self.gmm.covars_,
+                "means": self.gmm.means_,
+                "weights": self.gmm.weights_
+            }
+            raise FittingError(_x, params)
 
     def modelParams(self):
         new_params = {
