@@ -6,16 +6,19 @@ from poi_analyser_lib.config import *
 from poi_analyser_lib.trainer import Trainer
 from poi_analyser_lib.predictor import Predictor
 from poi_analyser_lib.logger import log
+from poi_analyser_lib.exception import *
 import os
 import rollbar
 import rollbar.contrib.flask
 import json
+import datetime
 
 app = Flask(__name__)
 
 @app.before_first_request
-def init_rollbar():
+def initService():
     """init rollbar module"""
+    init_tag = "[Initiation of Service Process]\n"
     rollbar.init(
         # access token for the demo app: https://rollbar.com/demo
         ROLLBAR_TOKEN,
@@ -29,6 +32,15 @@ def init_rollbar():
     # send exceptions from `app` to rollbar, using flask"s signal system.
     got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
+    log_init_time = "Initiation START at: \t%s\n" % datetime.datetime.now()
+    log_app_env = "Environment Variable: \t%s\n" % APP_ENV
+    log_rollbar_token = "Rollbar Service TOKEN: \t%s\n" % ROLLBAR_TOKEN
+    log_logentries_token = "Logentries Service TOKEN: \t%s\n" % LOGENTRIES_TOKEN
+    log.info(init_tag + log_init_time)
+    log.info(init_tag + log_app_env)
+    log.info(init_tag + log_rollbar_token)
+    log.info(init_tag + log_logentries_token)
+
 @app.route("/trainingSpecificPOI/", methods=["POST"])
 def trainingPOI():
     train_tag = "[Training Process] "
@@ -40,7 +52,7 @@ def trainingPOI():
         print "Received data is", data
     except ValueError, err_msg:
 
-        log.error(train_tag + " ValueError: %s, params=%s" % (err_msg, request.data))
+        log.error(train_tag + "ValueError: %s, params=%s" % (err_msg, request.data))
 
         result["message"] = "Unvalid params: NOT a JSON Object"
         return json.dumps(result)
@@ -52,7 +64,7 @@ def trainingPOI():
         _model = data["model"]
     except KeyError, key:
 
-        log.error(train_tag + " KeyError: There is no key named %s, params=%s" % (key, request.data))
+        log.error(train_tag + "KeyError: There is no key named %s, params=%s" % (key, request.data))
 
         result["message"] = "Unvalid params: There is NO key named %s" % key
         return json.dumps(result)
@@ -82,7 +94,7 @@ def predictPOI():
         print "Received data is", data
     except ValueError, err_msg:
 
-        log.error(predict_tag + " ValueError: %s, params=%s" % (err_msg, request.data))
+        log.error(predict_tag + "ValueError: %s, params=%s" % (err_msg, request.data))
 
         result["message"] = "Unvalid params: NOT a JSON Object"
         return json.dumps(result)
@@ -94,7 +106,7 @@ def predictPOI():
         _models = data["models"]
     except KeyError, key:
 
-        log.error(predict_tag + " KeyError: There is no key named %s, params=%s" % (key, request.data))
+        log.error(predict_tag + "KeyError: There is no key named %s, params=%s" % (key, request.data))
 
         result["message"] = "Unvalid params: There is NO key named %s" % key
         return json.dumps(result)
