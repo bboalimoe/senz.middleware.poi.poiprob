@@ -52,7 +52,7 @@ def trainingPOI():
         print "Received data is", data
     except ValueError, err_msg:
 
-        log.error(train_tag + "ValueError: %s, params=%s" % (err_msg, request.data))
+        log.error(train_tag + "<ValueError>: %s, params=%s" % (err_msg, request.data))
 
         result["message"] = "Unvalid params: NOT a JSON Object"
         return json.dumps(result)
@@ -64,15 +64,20 @@ def trainingPOI():
         _model = data["model"]
     except KeyError, key:
 
-        log.error(train_tag + "KeyError: There is no key named %s, params=%s" % (key, request.data))
+        log.error(train_tag + "<KeyError>: There is no key named %s, params=%s" % (key, request.data))
 
         result["message"] = "Unvalid params: There is NO key named %s" % key
         return json.dumps(result)
 
     log.debug(train_tag + "Received observation is: %s and model is: %s" % (_obs, _model))
 
-    t = Trainer(_model)
-    t.fit(_obs)
+    try:
+        t = Trainer(_model)
+        t.fit(_obs)
+    except Exception, err_msg:
+        log.error(train_tag + str(err_msg))
+        result["message"] = str(err_msg)
+        return json.dumps(result)
 
     log.info(train_tag + "Fitting is complete")
     log.debug(train_tag + "Fitting model is: %s" % t.modelParams())
@@ -94,7 +99,7 @@ def predictPOI():
         print "Received data is", data
     except ValueError, err_msg:
 
-        log.error(predict_tag + "ValueError: %s, params=%s" % (err_msg, request.data))
+        log.error(predict_tag + "<ValueError>: %s, params=%s" % (err_msg, request.data))
 
         result["message"] = "Unvalid params: NOT a JSON Object"
         return json.dumps(result)
@@ -106,15 +111,21 @@ def predictPOI():
         _models = data["models"]
     except KeyError, key:
 
-        log.error(predict_tag + "KeyError: There is no key named %s, params=%s" % (key, request.data))
+        log.error(predict_tag + "<KeyError>: There is no key named %s, params=%s" % (key, request.data))
 
         result["message"] = "Unvalid params: There is NO key named %s" % key
         return json.dumps(result)
 
     log.debug(predict_tag + "Received sequence is: %s and models are: %s" % (_t, _models))
 
-    p = Predictor(_models)
-    scores = p.scores(_t)
+    try:
+        p = Predictor(_models)
+        scores = p.scores(_t)
+        print "cao"
+    except Exception, err_msg:
+        log.error(predict_tag + str(err_msg))
+        result["message"] = str(err_msg)
+        return json.dumps(result)
 
     log.info(predict_tag + "Predicting is complete")
     log.debug(predict_tag + "Prediction is: %s" % scores)
