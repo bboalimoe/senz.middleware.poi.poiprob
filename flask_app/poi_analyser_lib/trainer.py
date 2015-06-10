@@ -16,7 +16,7 @@ class Trainer(object):
         try:
             self.gmm = GMM(n_components=self.n_c, covariance_type=self.c_t,
                            random_state=None, thresh=None, tol=1e-3, min_covar=1e-3,
-                           n_iter=self.n_i, n_init=1, params='wmc', init_params='wmc')
+                           n_iter=self.n_i, n_init=1, params="wmc", init_params="wmc")
         except:
             raise ModelInitError(self.n_c, self.c_t, self.n_i)
 
@@ -62,15 +62,15 @@ class Trainer(object):
 
 
 if __name__ == "__main__":
-    _model = {'nMix': 4, 'covarianceType': 'full', "nIter": 50,
-              'params': {'nMix': 4, 'covarianceType': 'full', 'params': {
-                  'covars': [[[1.2221303985456107]], [[0.3086663025400781]], [[1.28502444797073]],
+    _model = {"nMix": 4, "covarianceType": "full", "nIter": 50,
+              "params": {"nMix": 4, "covarianceType": "full", "params": {
+                  "covars": [[[1.2221303985456107]], [[0.3086663025400781]], [[1.28502444797073]],
                              [[0.26113702790883486]]],
-                  'weights': [0.23603795980927875, 0.2527552282253478, 0.2800574289988682, 0.2311493829665058],
-                  'means': [[4.536022877901543], [1.4914085123695209], [3.6895831128524326], [6.571810554595958]]}}}
+                  "weights": [0.23603795980927875, 0.2527552282253478, 0.2800574289988682, 0.2311493829665058],
+                  "means": [[4.536022877901543], [1.4914085123695209], [3.6895831128524326], [6.571810554595958]]}}}
 
-    # _model = {'nMix': 4, 'covarianceType': 'full', "nIter": 50,
-    #           'params': {'nMix': 4, 'covarianceType': 'full'}
+    # _model = {"nMix": 4, "covarianceType": "full", "nIter": 50,
+    #           "params": {"nMix": 4, "covarianceType": "full"}
     # }
     _obs = [1, 1, 1, 1, 5, 5, 5, 5, 19, 19, 19, 19, 33, 33, 33, 33]
 

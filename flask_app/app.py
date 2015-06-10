@@ -1,15 +1,9 @@
-# -*- coding: UTF-8 -*-
-## Rollbar init code. You"ll need the following to use Rollbar with Flask.
-## This requires the "blinker" package to be installed
 from flask import Flask, request, got_request_exception
 from poi_analyser_lib.config import *
 from poi_analyser_lib.trainer import Trainer
 from poi_analyser_lib.predictor import Predictor
 from poi_analyser_lib.logger import log
-from poi_analyser_lib.utils import getTracebackInfo
-# from poi_analyser_lib.exception import *
 import os
-import sys, traceback
 import rollbar
 import rollbar.contrib.flask
 import json
