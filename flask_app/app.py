@@ -6,8 +6,10 @@ from poi_analyser_lib.config import *
 from poi_analyser_lib.trainer import Trainer
 from poi_analyser_lib.predictor import Predictor
 from poi_analyser_lib.logger import log
-from poi_analyser_lib.exception import *
+from poi_analyser_lib.utils import getTracebackInfo
+# from poi_analyser_lib.exception import *
 import os
+import sys, traceback
 import rollbar
 import rollbar.contrib.flask
 import json
@@ -121,7 +123,6 @@ def predictPOI():
     try:
         p = Predictor(_models)
         scores = p.scores(_t)
-        print "cao"
     except Exception, err_msg:
         log.error(predict_tag + str(err_msg))
         result["message"] = str(err_msg)

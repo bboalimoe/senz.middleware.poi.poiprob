@@ -3,6 +3,8 @@ from utils import checkCovarianceType
 from sklearn.mixture import GMM
 from exception import *
 
+import sys, traceback
+
 class Predictor(object):
     def __init__(self, models):
         covars  = []
@@ -48,6 +50,7 @@ class Predictor(object):
         except CovarianceTypeError:
             raise
         except:
+            print "rilegou"
             raise ModelInitError(self.n_mix, self.covar_types, None)
 
         self.gmm.covars_  = np.array(covars)

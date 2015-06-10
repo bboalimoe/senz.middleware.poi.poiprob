@@ -1,6 +1,5 @@
 __all__ = ["LOGENTRIES_TOKEN", "ROLLBAR_TOKEN", "APP_ENV"]
 import os
-from exception import *
 
 # Settings
 
