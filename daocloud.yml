@@ -1,0 +1,16 @@
+image: daocloud/ci-python:2.7
+
+services:
+
+env:
+    - APP_ENV = "dev"
+
+install:
+    - sudo pip install flask_app/requirements.txt
+
+before_script:
+    - echo "Application Environment Variable"
+    - echo $APP_ENV
+
+script:
+    - nosetests 
