@@ -6,6 +6,8 @@ env:
     - APP_ENV = "dev"
 
 install:
+    - sudo apt-get update
+    - sudo apt-get -y install pip
     - sudo pip install flask_app/requirements.txt
 
 before_script:
