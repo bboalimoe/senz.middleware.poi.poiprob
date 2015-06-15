@@ -6,13 +6,13 @@ env:
     - APP_ENV = "dev"
 
 install:
+    - echo "Application Environment Variable"
+    - echo $APP_ENV
+
+before_script:
     - sudo apt-get update
     - sudo apt-get -y install python-pip
     - sudo pip install ./flask_app/requirements.txt
-
-before_script:
-    - echo "Application Environment Variable"
-    - echo $APP_ENV
 
 script:
     - nosetests
