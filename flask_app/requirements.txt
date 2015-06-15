@@ -1,8 +1,1 @@
-numpy
-scipy
-scikit-learn
-Flask
-blinker
-gunicorn
-rollbar
-logentries
+numpy==1.9.2
