@@ -12,7 +12,7 @@ install:
 before_script:
     - sudo apt-get update
     - sudo apt-get -y install python-pip
-    - sudo pip install ./flask_app/requirements.txt
 
 script:
+    - sudo pip install ./flask_app/requirements.txt
     - nosetests
