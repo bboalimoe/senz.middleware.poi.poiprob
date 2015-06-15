@@ -8,11 +8,19 @@ env:
 install:
     - echo "Application Environment Variable"
     - echo $APP_ENV
-
-before_script:
     - sudo apt-get update
     - sudo apt-get -y install python-pip
+    - pip install flask
+    - pip install Cython
+    - pip install numpy
+    - apt-get install -y python-scipy
+    - pip install scikit-learn
+    - pip install blinker
+    - pip install rollbar
+    - pip install logentries
+
+before_script:
+
 
 script:
-    - sudo pip install -r ./flask_app/requirements.txt
     - nosetests
