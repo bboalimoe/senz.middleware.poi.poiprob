@@ -1,7 +1,5 @@
 image: daocloud/ci-python:2.7
 
-services:
-
 env:
     - APP_ENV = "dev"
 
@@ -18,9 +16,6 @@ install:
     - pip install blinker
     - pip install rollbar
     - pip install logentries
-
-before_script:
-
 
 script:
     - nosetests
