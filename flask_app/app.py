@@ -115,6 +115,7 @@ def predictPOI():
     log.debug(predict_tag + "Received sequence is: %s and models are: %s" % (_t, _models))
 
     try:
+        print json.dumps(_models)
         p = Predictor(_models)
         scores = p.scores(_t)
     except Exception, err_msg:

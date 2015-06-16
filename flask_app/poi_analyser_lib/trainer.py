@@ -8,6 +8,7 @@ class Trainer(object):
             self.n_c = model["nMix"]
             self.c_t = model["covarianceType"]
             self.n_i = model["nIter"]
+            self.count = model["count"]
             init_params = model["params"]
         except KeyError, error_key:
             raise ModelParamKeyError(error_key)
@@ -29,6 +30,7 @@ class Trainer(object):
                 raise ModelParamKeyError(error_key)
 
     def fit(self, x):
+        self.x = x
         _x = np.array(x)
         if _x.ndim == 1:
             _x = _x.reshape([len(x), 1])
@@ -47,6 +49,7 @@ class Trainer(object):
         new_params = {
             "nMix": self.n_c,
             "covarianceType": self.c_t,
+            "count": self.count + len(self.x),
             "params": {
                 "nMix": self.n_c,
                 "covarianceType": self.c_t,
@@ -61,7 +64,7 @@ class Trainer(object):
 
 
 if __name__ == "__main__":
-    _model = {"nMix": 4, "covarianceType": "full", "nIter": 50,
+    _model = {"nMix": 4, "covarianceType": "full", "nIter": 50, "count": 100,
               "params": {"nMix": 4, "covarianceType": "full", "params": {
                   "covars": [[[1.2221303985456107]], [[0.3086663025400781]], [[1.28502444797073]],
                              [[0.26113702790883486]]],
