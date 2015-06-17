@@ -1,40 +1,37 @@
+import bugsnag
+import os
+import json
+import datetime
 from flask import Flask, request, got_request_exception
 from poi_analyser_lib.config import *
 from poi_analyser_lib.trainer import Trainer
 from poi_analyser_lib.predictor import Predictor
 from poi_analyser_lib.logger import log
-import os
-import rollbar
-import rollbar.contrib.flask
-import json
-import datetime
+from bugsnag.flask import handle_exceptions
 
 app = Flask(__name__)
 
 @app.before_first_request
-def initService():
-    """init rollbar module"""
-    init_tag = "[Initiation of Service Process]\n"
-    rollbar.init(
-        # access token for the demo app: https://rollbar.com/demo
-        ROLLBAR_TOKEN,
-        # environment name
-        "production",
-        # server root directory, makes tracebacks prettier
-        root=os.path.dirname(os.path.realpath(__file__)),
-        # flask already sets up logging
-        allow_logging_basic_config=False)
+def init_before_first_request():
+    import datetime
 
-    # send exceptions from `app` to rollbar, using flask"s signal system.
-    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
+    init_tag = "[Initiation of Service Process]\n"
+
+    # Configure Bugsnag
+    bugsnag.configure(
+        api_key=BUGSNAG_TOKEN,
+        project_root=os.path.dirname(os.path.realpath(__file__)),
+    )
+    # Attach Bugsnag to Flask's exception handler
+    handle_exceptions(app)
 
     log_init_time = "Initiation START at: \t%s\n" % datetime.datetime.now()
     log_app_env = "Environment Variable: \t%s\n" % APP_ENV
-    log_rollbar_token = "Rollbar Service TOKEN: \t%s\n" % ROLLBAR_TOKEN
+    log_bugsnag_token = "Bugsnag Service TOKEN: \t%s\n" % BUGSNAG_TOKEN
     log_logentries_token = "Logentries Service TOKEN: \t%s\n" % LOGENTRIES_TOKEN
     log.info(init_tag + log_init_time)
     log.info(init_tag + log_app_env)
-    log.info(init_tag + log_rollbar_token)
+    log.info(init_tag + log_bugsnag_token)
     log.info(init_tag + log_logentries_token)
 
 @app.route("/trainingSpecificPOI/", methods=["POST"])
