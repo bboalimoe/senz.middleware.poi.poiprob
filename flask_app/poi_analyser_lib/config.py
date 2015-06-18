@@ -24,7 +24,7 @@ except KeyError, key:
     print "The local env will be applied"
     APP_ENV = "local"
 finally:
-    if APP_ENV == "dev":
+    if APP_ENV == "test":
         LOGENTRIES_TOKEN = LOGENTRIES_DEV_TOKEN
         BUGSNAG_TOKEN = BUGSNAG_DEV_TOKEN
     elif APP_ENV == "prod":
