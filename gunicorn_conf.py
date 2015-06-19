@@ -6,7 +6,8 @@ import multiprocessing
 # for nginx or other proxy:
 bind = "unix:/app/run/gunicorn.sock"
 #
-workers = multiprocessing.cpu_count() * 2 + 1
+# workers = multiprocessing.cpu_count() * 2 + 1
+workers = 6
 # should save some memory:
 preload_app = True
 
